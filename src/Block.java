@@ -15,5 +15,27 @@ public class Block {
 		this.previousHash = ph;
 		this.hash = hashCode();
 	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public int getHash() {
+		return hash;
+	}
+
+	public ArrayList<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+	public int getPreviousHash() {
+		return previousHash;
+	} 
+	
+	
 	
 }
