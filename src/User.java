@@ -1,3 +1,7 @@
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.util.ArrayList;
 
 import static java.util.UUID.randomUUID;
@@ -5,9 +9,16 @@ import static java.util.UUID.randomUUID;
 public class User {
     ArrayList<User> neighbours = new ArrayList<>();
     String id;
-
-    public User(){
-        id = randomUUID().toString();
+    KeyPair keyPair; 
+	Signature userSignatureType;  
+	
+    public User() throws NoSuchAlgorithmException{
+        id = randomUUID().toString(); 
+        
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+        kpg.initialize(1024);
+        keyPair = kpg.genKeyPair();  
+        userSignatureType = Signature.getInstance("MD5WithRSA");
     }
 
     @Override
@@ -19,4 +30,24 @@ public class User {
         res += '\n';
         return res;
     }
+
+	public ArrayList<User> getNeighbours() {
+		return neighbours;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public KeyPair getKeyPair() {
+		return keyPair;
+	}
+
+	public Signature getUserSignatureType() {
+		return userSignatureType;
+	}  
+	
+	
+    
+    
 }
