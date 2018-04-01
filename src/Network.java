@@ -7,7 +7,7 @@ public class Network {
 
     public Network(int numberOfUsers){
         for (int i = 0; i < numberOfUsers; i++) {
-            User newUser = new User();
+            User newUser = new User(i);
             users.put(i, newUser);
         }
     }
