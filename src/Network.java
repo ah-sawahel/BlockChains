@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class Network {
         int numberOfNeighbours = networkSize / 10;
         numberOfNeighbours = numberOfNeighbours == 0? 2 : numberOfNeighbours;
         User currentUser;
-        Random random = new Random();
+
         for (int i = 0; i < networkSize; i++) {
             currentUser = users.get(i);
             while(currentUser.neighbours.size() < numberOfNeighbours){
@@ -38,8 +39,6 @@ public class Network {
             newNeighbour = random.nextInt(networkSize);
             if(newNeighbour!=currentUser)
                 accepted=true;
-            if(users.get(newNeighbour).neighbours.size()>=numberOfNeighbours)
-                accepted=false;
             if(users.get(currentUser).neighbours.contains(users.get(newNeighbour)))
                 accepted = false;
         }
@@ -47,7 +46,7 @@ public class Network {
     }
 
     public static void main(String[] args) {
-        Network network = new Network(5);
+        Network network = new Network(30);
         network.connectUsers();
         for (int i = 0; i < network.users.size(); i++) {
             System.out.println(network.users.get(i).toString());
