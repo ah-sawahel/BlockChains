@@ -1,3 +1,9 @@
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -6,8 +12,13 @@ public class Network {
 
     public Network(int numberOfUsers){
         for (int i = 0; i < numberOfUsers; i++) {
-            User newUser = new User();
-            users.put(i, newUser);
+            User newUser = null;
+            try {
+                newUser = new User(i);
+                users.put(i, newUser);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -16,7 +27,7 @@ public class Network {
         int numberOfNeighbours = networkSize / 10;
         numberOfNeighbours = numberOfNeighbours == 0? 2 : numberOfNeighbours;
         User currentUser;
-        Random random = new Random();
+
         for (int i = 0; i < networkSize; i++) {
             currentUser = users.get(i);
             while(currentUser.neighbours.size() < numberOfNeighbours){
@@ -38,19 +49,25 @@ public class Network {
             newNeighbour = random.nextInt(networkSize);
             if(newNeighbour!=currentUser)
                 accepted=true;
-            if(users.get(newNeighbour).neighbours.size()>=numberOfNeighbours)
-                accepted=false;
             if(users.get(currentUser).neighbours.contains(users.get(newNeighbour)))
                 accepted = false;
         }
         return users.get(newNeighbour);
     }
 
-    public static void main(String[] args) {
-        Network network = new Network(5);
+    public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        // TEST IT :)
+        Network network = new Network(50);
         network.connectUsers();
+        network.users.get(4).createTransaction();
+        network.users.get(12).createTransaction();
+        network.users.get(35).createTransaction();
+        network.users.get(2).createTransaction();
+        network.users.get(44).createTransaction();
+        network.users.get(17).createTransaction();
         for (int i = 0; i < network.users.size(); i++) {
             System.out.println(network.users.get(i).toString());
         }
+        // BEST REGARDS ^_^
     }
 }
