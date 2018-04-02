@@ -46,7 +46,7 @@ public class Network {
     }
 
     public static void main(String[] args) {
-        Network network = new Network(30);
+        Network network = new Network(5);
         network.connectUsers();
         for (int i = 0; i < network.users.size(); i++) {
             System.out.println(network.users.get(i).toString());
