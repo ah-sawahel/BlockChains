@@ -7,15 +7,17 @@ import java.util.Base64;
 public class Transaction {
 
 	String id;
-	byte[] transactionSignature; 
+	byte[] transactionSignature;
+	PublicKey ownerPublicKey;
 
 	public Transaction(User user) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException, UnsupportedEncodingException{
 		this.id = UUID.randomUUID().toString();   
     	this.setSignature(user);
+    	ownerPublicKey = user.keyPair.getPublic();
 	} 
 	
 	
-    private void setSignature(User user) throws SignatureException, NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException{
+    private void setSignature(User user) throws SignatureException, UnsupportedEncodingException, InvalidKeyException{
     	byte[] data = user.getId().getBytes("UTF8");
          
         user.getUserSignatureType().initSign(user.getKeyPair().getPrivate());
@@ -23,12 +25,10 @@ public class Transaction {
         
         byte[] signatureBytes = user.getUserSignatureType().sign();  
         this.transactionSignature = signatureBytes;
-        System.out.println("Singature:" + Base64.getEncoder().encodeToString(signatureBytes));
-
+//        System.out.println("Singature:" + Base64.getEncoder().encodeToString(signatureBytes));
+    }
     
-    } 
-    
-    public void verifySignature(User user, byte[] signature) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, UnsupportedEncodingException{
+    public void verifySignature(User user, byte[] signature) throws SignatureException, InvalidKeyException, UnsupportedEncodingException{
     	user.getUserSignatureType().initVerify(user.getKeyPair().getPublic()); 
     	byte[] data = user.getId().getBytes("UTF8");
         user.getUserSignatureType().update(data);

@@ -1,8 +1,5 @@
 import java.security.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
-
-import static java.lang.System.currentTimeMillis;
 
 public class Block {
     

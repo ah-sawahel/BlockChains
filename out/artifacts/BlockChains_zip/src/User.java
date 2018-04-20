@@ -45,6 +45,10 @@ public class User {
             commulator.add(t);
             NotifyNeighbours(t);
             if(commulator.size()>4){
+                String nonce = Mine();
+                System.out.println(Long.valueOf(nonce.hashCode()) + "    ********************************************");
+                //TODO use nonce in hashing :)
+
                 Block newBlock =new Block(blockChain.size(), commulator, headHash);
                 headHash = newBlock.getHash();
                 blockChain.put(newBlock.getHash(), newBlock);
@@ -99,5 +103,13 @@ public class User {
         Transaction newTransaction = new Transaction(this);
         commulator.add(newTransaction);
         NotifyNeighbours(newTransaction);
+    }
+
+    public String Mine(){
+        String nonce = randomUUID().toString().substring(0,5) + headHash;
+        while(!(nonce.startsWith("010") && Long.valueOf(nonce.hashCode()) > 1e9))
+            nonce = randomUUID().toString().substring(0,5) + headHash;
+        System.out.println(nonce + " ------------------------------");
+        return nonce;
     }
 }
