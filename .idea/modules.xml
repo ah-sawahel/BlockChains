@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BlockChains.iml" filepath="$PROJECT_DIR$/BlockChains.iml" />
+      <module fileurl="file://$PROJECT_DIR$/out/artifacts/BlockChains_zip/BlockChains_zip.iml" filepath="$PROJECT_DIR$/out/artifacts/BlockChains_zip/BlockChains_zip.iml" />
     </modules>
   </component>
 </project>

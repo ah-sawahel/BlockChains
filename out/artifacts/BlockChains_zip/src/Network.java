@@ -57,11 +57,11 @@ public class Network {
 
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         // TEST IT :)
-        int n = 30;
+        int n = 100;
         Random random = new Random();
         Network network = new Network(n);
         network.connectUsers();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             network.users.get(random.nextInt(n)).createTransaction();
         }
 

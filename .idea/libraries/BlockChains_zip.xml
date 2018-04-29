@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="BlockChains_zip">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/BlockChains_zip.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

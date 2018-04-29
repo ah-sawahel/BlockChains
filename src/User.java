@@ -12,19 +12,26 @@ public class User {
     String id;
     KeyPair keyPair; 
 	Signature userSignatureType;
-	HashMap<Integer, Block> blockChain;
+    HashMap<Integer, Block> blockChain;
+    HashMap<Integer, Block> cache;
     ArrayList<Transaction> commulator;
     int headHash = -1;
+    Block root;
 	
     public User(int id) throws NoSuchAlgorithmException{
-        this.id = "" + id;//randomUUID().toString();
+        this.id = "" + id;
         
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(1024);
         keyPair = kpg.genKeyPair();  
         userSignatureType = Signature.getInstance("MD5WithRSA");
+        root = new Block(0, null, 0);
+        root.level = 0;
         blockChain = new HashMap<>();
+        blockChain.put(0, root);
         commulator = new ArrayList<>();
+        cache = new HashMap<>();
+        cache.put(0, root);
     }
 
     @Override
@@ -39,38 +46,56 @@ public class User {
         return res;
     }
 
-    public void newEvent(Transaction t){
+    private void newEvent(Transaction t, User transationOwner) throws UnsupportedEncodingException, SignatureException, InvalidKeyException {
         if(!commulator.contains(t))
         {
             commulator.add(t);
-            NotifyNeighbours(t);
+            NotifyNeighbours(t, transationOwner);
             if(commulator.size()>4){
                 String nonce = Mine();
                 System.out.println(Long.valueOf(nonce.hashCode()) + "    ********************************************");
                 //TODO use nonce in hashing :)
 
-                Block newBlock =new Block(blockChain.size(), commulator, headHash);
-                headHash = newBlock.getHash();
-                blockChain.put(newBlock.getHash(), newBlock);
+                // Create a block and add it to the main block chain + change root
+                Block newBlock = new Block(blockChain.size(), commulator, root.hash);
+                newBlock.previousBlock = root;
+                newBlock.level = root.level + 1;
+                root = newBlock;
+                cache.put(newBlock.hash, root);
+                blockChain.put(newBlock.hash, newBlock);
+
+                // propagate the new block to neighbours
                 NotifyNeighbours(newBlock);
             }
         }
     }
 
-    public void newEvent(Block b){
-        //TODO implement block receiving
-//        if(!blockChain.containsValue(b));
-//        {
-//            blockChain.put(b.getHash(), b);
-//        }
+    private void newEvent(Block newBlock) {
+        // add any block received to the cache if its previous block is already found
+        if(cache.containsKey(newBlock.previousHash)){
+            cache.put(newBlock.getHash(), newBlock);
+
+//            previous block + level should already be set, else use cloning
+//            newBlock.previousBlock = cache.get(newBlock.previousHash);
+//            newBlock.level = cache.get(newBlock.previousHash).level + 1;
+
+            // check to add in blockchain
+            if(root.hash == newBlock.previousHash){
+                blockChain.put(newBlock.getHash(), newBlock);
+                root = newBlock;
+            }
+        }
     }
 
-    public void NotifyNeighbours(Transaction t){
+
+    public void NotifyNeighbours(Transaction t, User transactionOwner) throws UnsupportedEncodingException, SignatureException, InvalidKeyException {
         Random random = new Random();
         int randomNeighboursCount = random.nextInt((neighbours.size()-1)/2) + (neighbours.size()/4);
         Collections.shuffle(neighbours);
-        for (int i = 0; i < randomNeighboursCount; i++) {
-            neighbours.get(i).newEvent(t);
+        if(t.verifySignature(transactionOwner)){
+            for (int i = 0; i < randomNeighboursCount; i++) {
+                neighbours.get(i).newEvent(t, transactionOwner);
+            }
         }
     }
 
@@ -83,7 +108,7 @@ public class User {
         }
     }
 
-	public ArrayList<User> getNeighbours() {
+    public ArrayList<User> getNeighbours() {
 		return neighbours;
 	}
 
@@ -102,7 +127,7 @@ public class User {
 	public void createTransaction() throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, UnsupportedEncodingException {
         Transaction newTransaction = new Transaction(this);
         commulator.add(newTransaction);
-        NotifyNeighbours(newTransaction);
+        NotifyNeighbours(newTransaction, this);
     }
 
     public String Mine(){

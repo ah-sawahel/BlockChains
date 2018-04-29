@@ -39,11 +39,11 @@ public class User {
         return res;
     }
 
-    public void newEvent(Transaction t){
+    private void newEvent(Transaction t, User transationOwner) throws UnsupportedEncodingException, SignatureException, InvalidKeyException {
         if(!commulator.contains(t))
         {
             commulator.add(t);
-            NotifyNeighbours(t);
+            NotifyNeighbours(t, transationOwner);
             if(commulator.size()>4){
                 String nonce = Mine();
                 System.out.println(Long.valueOf(nonce.hashCode()) + "    ********************************************");
@@ -57,20 +57,19 @@ public class User {
         }
     }
 
-    public void newEvent(Block b){
-        //TODO implement block receiving
-//        if(!blockChain.containsValue(b));
-//        {
-//            blockChain.put(b.getHash(), b);
-//        }
+    private void newEvent(Block b) {
+
     }
 
-    public void NotifyNeighbours(Transaction t){
+
+    public void NotifyNeighbours(Transaction t, User transactionOwner) throws UnsupportedEncodingException, SignatureException, InvalidKeyException {
         Random random = new Random();
         int randomNeighboursCount = random.nextInt((neighbours.size()-1)/2) + (neighbours.size()/4);
         Collections.shuffle(neighbours);
-        for (int i = 0; i < randomNeighboursCount; i++) {
-            neighbours.get(i).newEvent(t);
+        if(t.verifySignature(transactionOwner)){
+            for (int i = 0; i < randomNeighboursCount; i++) {
+                neighbours.get(i).newEvent(t, transactionOwner);
+            }
         }
     }
 
@@ -83,7 +82,7 @@ public class User {
         }
     }
 
-	public ArrayList<User> getNeighbours() {
+    public ArrayList<User> getNeighbours() {
 		return neighbours;
 	}
 
@@ -102,7 +101,7 @@ public class User {
 	public void createTransaction() throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, UnsupportedEncodingException {
         Transaction newTransaction = new Transaction(this);
         commulator.add(newTransaction);
-        NotifyNeighbours(newTransaction);
+        NotifyNeighbours(newTransaction, this);
     }
 
     public String Mine(){

@@ -5,9 +5,11 @@ public class Block {
     
 	int index; 
 	int hash;
+	int previousHash;
 	ArrayList<Transaction> transactions; 
-	Timestamp createdAt; 
-	int previousHash; 
+	Timestamp createdAt;
+	Block previousBlock;
+	int level;
 	
 	public Block(int i, ArrayList<Transaction> t, int ph){
 		this.index = i;
