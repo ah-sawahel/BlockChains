@@ -4,25 +4,25 @@ import java.util.ArrayList;
 public class Block {
     
 	int index; 
-	int hash;
-	int previousHash;
+	String hash;
+	String previousHash;
 	ArrayList<Transaction> transactions; 
 	Timestamp createdAt;
 	Block previousBlock;
 	int level;
 	
-	public Block(int i, ArrayList<Transaction> t, int ph){
+	public Block(int i, ArrayList<Transaction> t, String ph){
 		this.index = i;
 		this.transactions = t;
 		this.previousHash = ph;
-		this.hash = hashCode();
+		this.hash = "";
 	}
 
 	public int getIndex() {
 		return index;
 	}
 
-	public int getHash() {
+	public String getHash() {
 		return hash;
 	}
 
@@ -34,7 +34,7 @@ public class Block {
 		return createdAt;
 	}
 
-	public int getPreviousHash() {
+	public String getPreviousHash() {
 		return previousHash;
 	}
 }
